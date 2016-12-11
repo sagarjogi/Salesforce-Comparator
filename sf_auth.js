@@ -43,7 +43,7 @@ this.authenticate = function(req,res) {
 		sourceorg = nforce.createConnection({
 			clientId:"3MVG9uudbyLbNPZOMiosUBBq_4_PAax2Pc.FCpYU_AdkO7gPVsglpeKjrvkj5GkCRkpnHqp_F7.vbf7aYNxyA",
 			clientSecret: "3678639888717772630",
-			redirectUri: "http://localhost:3000/oauth/_callback",
+			//redirectUri: "http://localhost:3000/oauth/_callback",
 			apiVersion: 'v36.0',  		// optional, defaults to current salesforce API version
 	 		environment: 'production',  	// optional, salesforce 'sandbox' or 'production', production default
 	 		mode: 'single' 	
@@ -65,7 +65,7 @@ this.authenticate = function(req,res) {
 		targetorg = nforce.createConnection({
 			clientId: "3MVG9ZL0ppGP5UrAE8.Fw7hBn4r5b1QHOIeTU9jmkvOu32WDqDmUiFSlH_mfOs3JBy07B8KZAgCTh_7fvOBl2",
 			clientSecret: "7326108786550669029",
-			redirectUri: "http://localhost:3000/oauth/_callback",
+			//redirectUri: "http://localhost:3000/oauth/_callback",
 			apiVersion: 'v36.0',  		// optional, defaults to current salesforce API version
 	 		environment: 'production',  	// optional, salesforce 'sandbox' or 'production', production default
 	 		mode: 'single' 	
