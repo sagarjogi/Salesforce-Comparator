@@ -31,6 +31,8 @@ app.get("/process_get", function (req, res) {
    res.end(JSON.stringify(response));
 });
 
-app.listen(port, function(){
+var server = app.listen(port, function(){
   console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });
+
+server.timeout = 2400;
