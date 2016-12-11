@@ -77,6 +77,22 @@ app.post("/customsettingmeta", function (req, res) {
   sf_data.fetchCustomSettingtMeta(req,res);
 
  });
+
+//retrieve Permission set User  Assignment
+app.post("/userpermissionsetassign", function (req, res) {
+  console.log("req.body: " );
+  console.log( req.body);
+  sf_data.fetchUserPermissionAsignment(req,res);
+
+ });
+
+//retrieve Permission set User  Assignment
+app.post("/objectpermission", function (req, res) {
+  console.log("req.body: " );
+  console.log( req.body);
+  sf_data.fetchObjectPerminssions(req,res);
+
+ });
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
@@ -110,7 +126,10 @@ app.use(function(err, req, res, next) {
 
 var server = app.listen(port, function () {
    
+
+
    console.log("Example app listening at http:");
+
 
 })
 
