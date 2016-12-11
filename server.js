@@ -3,7 +3,7 @@ var oSFAuth = require("./sf_auth.js");
 var oSFCS = new oSFAuth();
 
 var app = express();
-app.set('port', (process.env.PORT || 5000));
+var port = process.env.PORT || 3001; // use heroku's dynamic port or 3001 if localhost
 
 app.use(express.static(__dirname + "/public"));
 
@@ -31,15 +31,6 @@ app.get("/process_get", function (req, res) {
    res.end(JSON.stringify(response));
 });
 
-//var server = app.listen(8081, function () {
- //  var host = server.address().address
- //  var port = server.address().port
-  // console.log("Example app listening at http://%s:%s", host, port)
-
-//});
-
-var server = app.listen(app.get('port'), function(){
-   var host = server.address().address
-   var port = server.address().port
-   console.log("Example app listening at http://%s:%s", host, port)
+app.listen(port, function(){
+  console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });
