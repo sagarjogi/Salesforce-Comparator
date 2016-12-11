@@ -5,6 +5,12 @@ var oSFCS = new oSFAuth();
 var app = express();
 app.set('port', (process.env.PORT || 5000)); 
 
+app.listen(app.get('port'), function(){
+   console.log('started');
+  console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+});
+
+
 app.use(express.static(__dirname + "/public"));
 
 // app.get("/", function (req, res) {
@@ -19,8 +25,6 @@ app.post("/", function (req, res) {
    // res.send(oSFCS.authenticate());
    // oSFCS.res = res;
    oSFCS.authenticate(res);
-}).listen(app.get('port'), function() {
-    console.log('App is running, server is listening on port ', app.get('port'));
 });
 
 app.get("/process_get", function (req, res) {
