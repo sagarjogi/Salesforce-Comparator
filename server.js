@@ -3,7 +3,7 @@ var oSFAuth = require("./sf_auth.js");
 var oSFCS = new oSFAuth();
 
 var app = express();
-var port = process.env.PORT || 3001; // use heroku's dynamic port or 3001 if localhost
+var port = process.env.PORT || 3011; // use heroku's dynamic port or 3001 if localhost
 
 app.use(express.static(__dirname + "/public"));
 
