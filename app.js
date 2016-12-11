@@ -10,6 +10,9 @@ var viewPath = path.join(__dirname, 'views');
 var sf_auth  = require('./sf_auth');
 var sf_data = new sf_auth();
 var app = express();
+
+var port = process.env.PORT || 3000;
+
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing 
 
@@ -105,11 +108,11 @@ app.use(function(err, req, res, next) {
   });
 });
 
-var server = app.listen(8081, function () {
-   var host = server.address().address
-   var port = server.address().port
-   console.log("Example app listening at http://%s:%s", host, port);
-   console.log(path.join(__dirname, 'views'));
+app.listen(port, function() {
+   //var host = server.address().address
+   //var port = server.address().port
+   console.log("Example app listening at');
+   
 
 })
 
