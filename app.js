@@ -11,7 +11,7 @@ var sf_auth  = require('./sf_auth');
 var sf_data = new sf_auth();
 var app = express();
 
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 80;
 
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing 
@@ -108,11 +108,9 @@ app.use(function(err, req, res, next) {
   });
 });
 
-app.listen(port, function() {
-   //var host = server.address().address
-   //var port = server.address().port
-   console.log("Example app listening at');
+var server = app.listen(port, function () {
    
+   console.log("Example app listening at http:");
 
 })
 
