@@ -4,7 +4,7 @@ var oSFCS = new oSFAuth();
 
 var app = express();
 
-var port = process.env.PORT || 5000;
+var port = process.env.PORT || 80;
 
 console.log('jogi');
 console.log(port);
