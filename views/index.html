@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html ng-app="sfcompapp" ng-controller="sfcontroller" ng-cloak id="mainDiv">
+<head>
+    <!-- <link rel='stylesheet' href='/css/stylesheet.css' /> -->
+<!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://rawgit.com/angular/bower-material/master/angular-material.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.6/angular.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.6/angular-animate.min.js"></script>
+        <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.6/angular-aria.min.js"></script>
+    <script src="https://rawgit.com/angular/bower-material/master/angular-material.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-material-icons/0.7.1/angular-material-icons.min.js"></script> 
+    <script type="text/javascript" src="/js/todo.js"></script>
+    <style type="text/css">
+    #login-dialog {
+      max-width: 90%;
+      width: 500px;
+    }
+    .md-toast .error {
+        background-color: red;
+    }
+    .md-toast.md-top {
+        left: 50%;
+        margin-left: -150px;
+        top:50;
+    }
+    body{
+        font-family: verdana;
+    }
+    .available{
+        background-color:#4CAF50;
+    }
+    .not-available{
+        background-color:#f44336;
+    }
+
+</style>
+<script type="text/javascript">
+    
+</script>
+ <base href="/">
+</head>
+<body>
+
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+   <div >
+         <md-toolbar md-scroll-shrink>
+            <div class="md-toolbar-tools">Salesforce Comparator</div>
+          </md-toolbar>
+
+          <div layout="row" layout-sm="column">
+          <div ng-hide="orgDetail['sourceorg']" flex>
+            <span class="md-title">Click here to Login to Source Org.</span>
+                <md-button class="md-primary md-raised" ng-click="currentLogin='sourceorg';showLoginFirst();">
+                  LOGIN
+                </md-button>
+          </div>
+          <div ng-show="orgDetail['sourceorg']" flex>
+                <span class="md-headline">Source Org </span><br/>
+                    <span class="md-subhead">User:{{orgDetail['sourceorg'].uname}}</span>
+          </div>
+          <div ng-hide="orgDetail['destorg']" flex>
+            <span class="md-title">Click here to Login to Destination Org.</span>
+                <md-button class="md-primary md-raised" ng-click="currentLogin='destorg';showLoginFirst();">
+                  LOGIN
+                </md-button>
+          </div>
+          <div ng-show="orgDetail['destorg']" flex>
+             <span class="md-headline">Destination Org </span><br/>
+                    <span class="md-subhead">User:{{orgDetail['destorg'].uname}}</span>
+          </div>
+        </div>
+     <div style="visibility: hidden">
+    <div class="md-dialog-container" id="myStaticDialog">
+     <md-dialog id="login-dialog" aria-label="Login" ng-cloak>
+     <form name="loginForm">
+        <md-toolbar>
+          <div class="md-toolbar-tools">
+            <h2>Log In</h2>
+            <span flex></span>
+            <md-button class="md-icon-button" style="fill: white" aria-label="Close" onclick="angular.element(document.getElementById('mainDiv')).scope().closeDialog();">
+            <ng-md-icon icon="close" size="24"></ng-md-icon>
+              <!-- <md-icon md-svg-src="img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon> -->
+            </md-button>
+
+          </div>
+          <md-progress-linear md-mode="indeterminate" ng-if="showProgress"></md-progress-linear>
+        </md-toolbar>
+
+        <md-dialog-content>
+           <md-content class="md-padding">
+             <md-input-container class="md-block">
+              <label>Username</label>
+              <input name="username" ng-model="uName1" md-autofocus required />
+            </md-input-container>
+            <md-input-container class="md-block">
+              <label>Password</label>
+              <input type="password" name="password" ng-model="pass1" required />
+            </md-input-container>
+            <md-input-container class="md-block">
+            <label>Org Type</label>
+                 <md-select ng-model="ogType1" class="md-no-underline" placeholder="Org Type" required>
+                  <md-option value="production">Production</md-option>
+                  <md-option value="sandbox">Sandbox</md-option>
+                </md-select>
+            </md-input-container>
+           
+          </md-content>
+        </md-dialog-content>
+         
+        <md-dialog-actions layout="row">
+        <span style="color: red" ng-show="showError" class="md-subhead">Authenticaion Failed !!! Please check your credentials.</span>
+          <span flex></span>
+
+          <md-button ng-disabled="loginForm.$invalid" class="md-raised md-primary" onclick="angular.element(document.getElementById('mainDiv')).scope().loginSource();">Login</md-button>
+        </md-dialog-actions>
+     </form>
+    </md-dialog>
+  </div>
+  </div>    
+<br/>
+<br/>
+<div layout="column" ng-if="showMain" ng-cloak><!-- ng-if="showMain"  -->
+    <md-content>
+        <md-tabs md-dynamic-height md-border-bottom>
+             <md-tab label="Custom Setting">
+                <md-content class="md-padding">
+                    <div layout="row" layout-wrap>
+                         <div flex="20">
+                            <div layout="row" layout-sm="column" layout-wrap>
+                                <div flex="30">
+                                    <md-radio-group ng-model="csType.value">
+                                      <md-radio-button value="metadata" class="md-primary">Metadata</md-radio-button>
+                                      <md-radio-button value="data" class="md-primary"> Data </md-radio-button>
+                                    </md-radio-group>    
+                                </div>  
+                                <div flex="30">
+                                    <md-button class="md-fab md-primary" ng-disabled="showCSSpinnerCS" aria-label="Retrieve Metadata" onclick="angular.element(document.getElementById('mainDiv')).scope().fetchCS();">
+                                         <md-tooltip md-direction="right">
+                                          Retrieve Metadata
+                                        </md-tooltip>
+                                        <ng-md-icon icon="cloud_download" style="fill: white" size="46"></ng-md-icon>
+                                    </md-button>    
+                                </div>
+                                <div flex="30" ng-if="showCSSpinner">
+                                    <div layout="row" layout-sm="column" layout-align="space-around">
+                                      <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                                    </div>    
+                                </div>
+
+                            </div>
+                                  
+                         </div>
+                         <div flex="80">
+                             <div ng-if="sourceCSMetaFields && destinationCSMetaFields">
+                                 <div ng-cloak layout-gt-sm="row" layout="column">
+                                    <div flex-gt-sm="50" flex>
+                                        <md-toolbar layout="row" class="md-hue-3">
+                                          <div class="md-toolbar-tools">
+                                            <span>{{orgDetail['sourceorg'].uname}}</span>
+                                          </div>
+                                        </md-toolbar>
+                                    </div>
+                                  </div>
+                                </div>
+                         </div>
+                         
+                    </div>
+                    
+                    
+                </md-content>
+            </md-tab>
+            <md-tab label="Permission Sets">
+                <md-content class="md-padding">
+                <div layout="row" layout-wrap>
+                    <div flex="20">
+                        <div layout="row" layout-sm="column" layout-wrap>
+                            <div flex="30">
+                                <md-button class="md-fab md-primary" ng-disabled="showPSSpinner" aria-label="Retrieve Metadata" onclick="angular.element(document.getElementById('mainDiv')).scope().fetchPermissionSet();">
+                                     <md-tooltip md-direction="right">
+                                      Retrieve Metadata
+                                    </md-tooltip>
+                                    <ng-md-icon icon="cloud_download" style="fill: white" size="46"></ng-md-icon>
+                                </md-button>    
+                            </div>
+                            <div flex="30" ng-if="showPSSpinner">
+                                <div layout="row" layout-sm="column" layout-align="space-around">
+                                  <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                                </div>    
+                            </div>
+                        </div>
+                    </div>
+                    <div flex="80" ng-if="sourcePermissionset && destinationPermissionset">
+                    <div ng-cloak layout-gt-sm="row" layout="column">
+                        <div flex-gt-sm="50" flex>
+                            <md-toolbar layout="row" class="md-hue-3">
+                              <div class="md-toolbar-tools">
+                                <span>{{orgDetail['sourceorg'].uname}}</span>
+                              </div>
+                            </md-toolbar>
+                             <md-content>
+                                <md-list  class="md-dense" flex>
+                                    <md-subheader class="md-no-sticky">Total {{sourcePermissionset.length}} items</md-subheader>
+                                   <!--  <md-list-item class="md-1-line" ng-repeat="(key,value) in sourcePermissionsetMapSorted" ng-class="{'not-available':value==null,'available':value!=null}">
+                                      <div class="md-list-item-text" layout="column" >
+                                        <h2 ng-show="value!=null">{{value.name}}</h2>
+                                      </div>
+                                      
+                                    </md-list-item> -->
+                                    <div layout="row" ng-repeat="(key,value) in sourcePermissionsetMapSorted" ng-class="{'not-available':value==null,'available':value!=null}">
+                                         <div ng-show="value!=null">
+                                            <h4 ng-show="value!=null">{{value.name}}</h4>   
+                                        </div>
+                                         <div ng-show="value==null">
+                                            <h4>N/A</h4>
+                                         </div>
+                                    </div>
+                                </md-list>
+                            </md-content>    
+                        </div>
+                        <div flex-gt-sm="50" flex>
+                            <md-toolbar layout="row" class="md-hue-3">
+                              <div class="md-toolbar-tools">
+                                <span>{{orgDetail['destorg'].uname}}</span>
+                              </div>
+                            </md-toolbar>
+                             <md-content>
+                                <md-list  class="md-dense" flex>
+                                    <md-subheader class="md-no-sticky">Total {{destinationPermissionset.length}} items</md-subheader>
+                                    <!-- <md-list-item class="md-1-line" ng-repeat="(key,value) in destinationPermissionsetMapSorted" ng-class="{'not-available':value==null,'available':value!=null}">
+                                      <div class="md-list-item-text" layout="column" >
+                                        <h2 ng-show="value!=null">{{value.name}}</h2>
+                                      </div>
+                                      
+                                    </md-list-item> -->
+                                     <div layout="row" ng-repeat="(key,value) in destinationPermissionsetMapSorted" ng-class="{'not-available':value==null,'available':value!=null}">
+                                        <div ng-show="value!=null">
+                                            <h4 ng-show="value!=null">{{value.name}}</h4>   
+                                        </div>
+                                           <div ng-show="value==null">
+                                            <h4>N/A</h4>
+                                         </div>
+
+                                    </div>
+                                </md-list>
+                            </md-content>    
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+                </md-content>
+            </md-tab>
+        </md-tabs>  
+    </md-content>
+</div>    
+
+</div>
+</body>
+</html>
