@@ -19,6 +19,9 @@ app.post("/", function (req, res) {
    // res.send(oSFCS.authenticate());
    // oSFCS.res = res;
    oSFCS.authenticate(res);
+}).listen(port, function(){
+   console.log('started');
+  console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });
 
 app.get("/process_get", function (req, res) {
@@ -30,10 +33,10 @@ app.get("/process_get", function (req, res) {
    console.log(response);
    res.end(JSON.stringify(response));
 });
-
+/*
 app.listen(port, function(){
    console.log('started');
   console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });
-
+*/
 
