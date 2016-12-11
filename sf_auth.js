@@ -14,7 +14,7 @@ var orgData = {
 };
 var arrCSData = {};
 var arrCSNames = [];
-var arrCSLabels = [];
+var arrCSLabels = {};
 var arrCSCounter = 0;
 var NL="\n";
 var csOauth;
@@ -94,10 +94,10 @@ this.fetchPermissionSetMeta = function(req,res){
 	if(targetorg.username == req.body.uname) {
 
 		targetorg.query({ query: q , oauth: TargetOrgAuth}, function(err, resp){
-			console.log('>>>>> resonse in fetch----');
-			console.log(err);
-			console.log(req.body);
-			console.log(resp);
+			// console.log('>>>>> resonse in fetch----');
+			// console.log(err);
+			// console.log(req.body);
+			// console.log(resp);
 			if(!err && resp.records) {
 				destinationPermissionset = resp.records;
 				console.log('>>>>> resonse in fetch----');
@@ -109,12 +109,12 @@ this.fetchPermissionSetMeta = function(req,res){
 
 	} else {
 		
-		console.log("OAUTH JSON",req.body.oauth);
+		// console.log("OAUTH JSON",req.body.oauth);
 		sourceorg.query({ query: q , oauth: SourceOrgAuth}, function(err, resp){
-		console.log('>>>>> resonse in fetch----');
-		console.log(err);
-		console.log(req.body);
-		console.log(resp);
+		// console.log('>>>>> resonse in fetch----');
+		// console.log(err);
+		// console.log(req.body);
+		// console.log(resp);
 			if(!err && resp.records) {
 				destinationPermissionset = resp.records;
 				console.log('>>>>> resonse in fetch----');
@@ -125,6 +125,108 @@ this.fetchPermissionSetMeta = function(req,res){
 
 	}
 			
+}
+//fetch cs data
+this.fetchCSData = function(req,res){
+	if(targetorg.username == req.body.uname) {
+		org = targetorg;
+		oauth = TargetOrgAuth;
+	}else{
+		org = sourceorg;
+		oauth = SourceOrgAuth;
+	}
+	var strCSName = "";//"APTS_AD_Param_Map__c";
+	
+	for(var strParam in req.body.param){
+		strCSName = strParam;
+		break;
+	}
+	console.log("strCSName: ", strCSName);
+	var arrFields = req.body.param[strCSName];
+	console.log("arrFields: " , arrFields);
+	var arrFieldNames = [];
+	for(var i=0; i<arrFields.length; ++i){
+		arrFieldNames.push(arrFields[i].name);
+	}
+	console.log("arrFieldNames: " + arrFieldNames);
+	var strFieldNames = arrFieldNames.join(",");
+	console.log("arrFieldNames.join: " + strFieldNames);
+	var strQuery = "select " + strFieldNames
+			+" from " + strCSName
+			;
+	console.log("strQuery: " + strQuery);
+	org.query({ oauth: oauth, query: strQuery, fetchAll : true}
+	, function(err, resp) {
+		if(err) {
+			console.error("Error while getting Fields: " + err);
+		} else {
+			console.log("resp: " + JSON.stringify(resp));
+			var oRecords = JSON.parse(JSON.stringify(resp.records));
+			var arrRecords = [];
+			// var strRecord = "";
+			console.log("oRecords", oRecords);
+			for(var i=0; i<oRecords.length; ++i){
+				var arrRecord = [];
+				for(var oVal in oRecords[i]){
+					arrRecord.push(oRecords[i][oVal]);
+				}
+				arrRecords.push(arrRecord.join("#"));
+			}
+			
+			res.set(ContentType_JSON.key, ContentType_JSON.val);
+			res.send(arrRecords);
+
+		}
+	});
+}
+
+// Fetch Object permissions
+this.fetchObjectPerminssions = function(req,res){
+	if(targetorg.username == req.body.uname) {
+		org = targetorg;
+		oauth = TargetOrgAuth;
+	}else{
+		org = sourceorg;
+		oauth = SourceOrgAuth;
+	}
+	var q = 'select Id, PermissionsCreate, PermissionsDelete, PermissionsModifyAllRecords, PermissionsEdit, ParentId,parent.Name, PermissionsViewAllRecords, PermissionsRead, sobjecttype from ObjectPermissions ';
+	org.query({ query: q , oauth: oauth}, function(err, resp){
+
+		if(!err && resp.records) {
+			var sourceObjectPermission = resp.records;
+
+			res.send(sourceObjectPermission);
+		}
+	});
+}
+//Retrieving User Permissionset assignment
+this.fetchUserPermissionAsignment = function(req,res){
+	var sourceOrgUserPermissionAssigment = new Object ();
+	if(targetorg.username == req.body.uname) {
+		org = targetorg;
+		oauth = TargetOrgAuth;
+	}else{
+		org = sourceorg;
+		oauth = SourceOrgAuth;
+	}
+	var q = 'select id,PermissionSet.Name, PermissionSetId, Assignee.Name,Assignee.Id, Assignee.Username,Assignee.Email  from PermissionSetAssignment where NOT(PermissionSet.Name LIKE \'X00%\')';
+
+	org.query({ query: q , oauth: oauth}, function(err, resp){
+
+		if(!err && resp.records) {
+			resp.records.forEach(function(record) {
+				var dataarray = [];
+				if(sourceOrgUserPermissionAssigment[record['_fields'].permissionsetid] != null) {
+					dataarray = sourceOrgUserPermissionAssigment[record['_fields'].permissionsetid];
+				}
+				dataarray.push(record['_fields']);
+				sourceOrgUserPermissionAssigment[record['_fields'].permissionsetid] = dataarray;
+				
+			});
+			res.send(sourceOrgUserPermissionAssigment);
+		}
+	});
+
 }
 //retieving custom setting 
 this.fetchCustomSettingtMeta = function(req,res){
@@ -150,14 +252,13 @@ this.fetchCustomSettingtMeta = function(req,res){
 					arrCSNames.push(so.name);
 					var tmp = {};
 					tmp[so.name] = so.label;
-					arrCSLabels.push(tmp);
+					arrCSLabels[so.name]=so.label;
 					// arrCSNames.push({so.name : null});
 
 				// } else {
 					// strSOName = "SO#";
 				}
-				// strSOName += so.name;
-				// console.log(strSOName);
+				
 			});
 
 			// console.log("arrCSNames: " + arrCSNames);
@@ -178,6 +279,11 @@ function fetchFields(){
 		csMetaWrap = {labels:arrCSLabels,fields:arrCSData};
 		// csMetaRes.send(arrCSData);
 		csMetaRes.send(csMetaWrap);
+		arrCSData = {};
+		arrCSNames = [];
+		arrCSLabels = {};
+		arrCSCounter = 0;
+		csMetaWrap = {};
 		return;
 	}
 	//for(var arrCSCounter=0; i<arrCSData.length; ++i){ // loop over each CS
