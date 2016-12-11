@@ -3,13 +3,11 @@ var oSFAuth = require("./sf_auth.js");
 var oSFCS = new oSFAuth();
 
 var app = express();
-app.set('port', (process.env.PORT || 5000)); 
 
-app.listen(app.get('port'), function(){
-   console.log('started');
-  console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
-});
+var port = process.env.PORT || 5000;
 
+console.log('jogi');
+console.log(port);
 
 app.use(express.static(__dirname + "/public"));
 
@@ -42,4 +40,9 @@ app.listen(port, function(){
   console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });
 */
+
+
+app.listen(port, function() {
+  console.log('Listening on http://localhost:'+ port);
+});
 
