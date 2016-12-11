@@ -3,6 +3,8 @@ var oSFAuth = require("./sf_auth.js");
 var oSFCS = new oSFAuth();
 
 var app = express();
+app.set('port', (process.env.PORT || 5000));
+
 app.use(express.static(__dirname + "/public"));
 
 // app.get("/", function (req, res) {
