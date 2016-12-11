@@ -18,6 +18,7 @@
     "express": "~4.12.4",
     "jade": "~1.9.2",
     "jquery": "^2.1.4",
-    "serve-favicon": "~2.2.1"
+    "serve-favicon": "~2.2.1",
+    "nforce":"1.6.0"
   }
 }
