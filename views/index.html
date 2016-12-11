@@ -42,7 +42,13 @@
     .not-available{
         background-color:#f44336;
     }
-
+    md-sidenav{
+        width: 450px;
+        min-width: 550px;
+    }
+    td{
+        word-wrap: break-word;
+    }
 </style>
 <script type="text/javascript">
     
@@ -135,8 +141,8 @@
              <md-tab label="Custom Setting">
                 <md-content class="md-padding">
                     <div layout="row" layout-wrap>
-                         <div flex="20">
-                            <div layout="row" layout-sm="column" layout-wrap>
+                         <div flex="10">
+                            <div layout="column" layout-wrap>
                                 <div flex="30">
                                     <md-radio-group ng-model="csType.value">
                                       <md-radio-button value="metadata" class="md-primary">Metadata</md-radio-button>
@@ -146,7 +152,7 @@
                                 <div flex="30">
                                     <md-button class="md-fab md-primary" ng-disabled="showCSSpinnerCS" aria-label="Retrieve Metadata" onclick="angular.element(document.getElementById('mainDiv')).scope().fetchCS();">
                                          <md-tooltip md-direction="right">
-                                          Retrieve Metadata
+                                          Retrieve
                                         </md-tooltip>
                                         <ng-md-icon icon="cloud_download" style="fill: white" size="46"></ng-md-icon>
                                     </md-button>    
@@ -160,22 +166,142 @@
                             </div>
                                   
                          </div>
-                         <div flex="80">
+                         <div flex="90">
                              <div ng-if="sourceCSMetaFields && destinationCSMetaFields">
                                  <div ng-cloak layout-gt-sm="row" layout="column">
-                                    <div flex-gt-sm="50" flex>
+                                
+                                 <div class="container">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                             <div>
+                                                  
+                                                    <label>Search Custom Setting</label>
+                                                    <input ng-model="csSearch" placeholder="Search custom setting here...">
+                                                  
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                    <div class="col-md-6">
                                         <md-toolbar layout="row" class="md-hue-3">
                                           <div class="md-toolbar-tools">
                                             <span>{{orgDetail['sourceorg'].uname}}</span>
                                           </div>
                                         </md-toolbar>
+                                        <div ng-repeat="(key,value) in sourceCSMetaLabels" ng-show="(value | filter:csSearch)">
+            
+                                            <div class="panel panel-primary">
+                                                <div class="panel-heading">
+                                                <div style="width: 100%;">
+                                                <h2 class="panel-title">
+                                                    <span style='display:block;float:left'>
+                                                        <a role="button" data-toggle="collapse" id="ctsource{{key+$index}}" data-target="#collapsesource{{key+$index}}" ng-click="changeIcon($index)" >
+                                                            <font color="white">
+                                                                <span style="float:left;display:block" class="collapseIcon">
+                                                                    <!-- <i class="glyphicon glyphicon-minus"></i> -->
+                                                                </span>
+                                                            </font>
+                                                        </a>
+                                                    </span>
+                                                    <span>&nbsp;&nbsp;{{value}}&nbsp;{{key}}</span> 
+                                                </h2>
+                                                </div>
+                                                <div style="float: right;">
+                                                <a href="" title="View Data" ng-click="getCSData('source',key)"><i style="color: white;" class="glyphicon glyphicon-info-sign"></i></a>
+                                                </div>
+                                              </div>  
+                                              <div  class="panel-body panel-collapse collapse in" id="collapsesource{{key+$index}}">   
+                                                   <table class="table table-hover table-striped" style="font-size: 12px;table-layout: fixed;">
+                                                       <thead>
+                                                           <tr>
+                                                               <th> Field Label </th>
+                                                               <th> Field Name </th>
+                                                               <th> Datatype </th>
+                                                               <th style="width: 5%;"><i class="glyphicon glyphicon-question-sign" title="Shows if the field is available in the other org or not"></i></th>
+                                                           </tr>
+                                                       </thead>
+                                                       <tbody>
+                                                           <tr ng-repeat="item in sourceCSMetaFields[key]">
+                                                                <td> {{item.label}} </td>   
+                                                                <td> {{item.name}} </td>   
+                                                                <td> {{item.type}} </td>   
+                                                                <td>
+                                                                <!-- {{isCSAvailable('source',key,item.name)}} -->
+                                                                    <i ng-show="isCSAvailable('source',key,item.name)" class="glyphicon glyphicon-ok-sign" style="color: #4CAF50;font-size: 15px;"></i>
+                                                                    <i ng-hide="isCSAvailable('source',key,item.name)" class="glyphicon glyphicon-remove-sign" style="color: #f44336;font-size: 15px;"></i>
+                                                                </td>                                
+                                                           </tr>
+                                                       </tbody>
+                                                   </table>    
+                                              </div> 
+                                              </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                     <div >
+                                        <md-toolbar layout="row" class="md-hue-3">
+                                          <div class="md-toolbar-tools">
+                                            <span>{{orgDetail['destorg'].uname}}</span>
+                                          </div>
+                                        </md-toolbar>
+                                        <div ng-repeat="(key,value) in destinationCSMetaLabels" ng-show="(value | filter:csSearch)">
+            
+                                            <div class="panel panel-primary">
+                                                <div class="panel-heading">
+                                                <div style="width: 100%">
+                                                <h2 class="panel-title">
+                                                    <span style='display:block;float:left'>
+                                                        <a role="button" data-toggle="collapse" id="ctdest{{key+$index}}" data-target="#collapsedest{{key+$index}}" ng-click="changeIcon($index)" >
+                                                            <font color="white">
+                                                                <span style="float:left;display:block" class="collapseIcon">
+                                                                    <!-- <i class="glyphicon glyphicon-minus"></i> -->
+                                                                </span>
+                                                            </font>
+                                                        </a>
+                                                    </span>
+                                                    <span>&nbsp;&nbsp;{{value}}&nbsp;{{key}}</span> 
+                                                </h2>
+                                                </div>
+                                                  <div style="float: right;">
+                                                    <a href="" title="View Data" ng-click="getCSData('source',key)"><i style="color: white;" class="glyphicon glyphicon-info-sign"></i></a>
+                                                    </div>
+                                              </div>  
+                                              <div  class="panel-body panel-collapse collapse in" id="collapsedest{{key+$index}}">   
+                                                   <table class="table table-hover table-striped" style="font-size: 12px;table-layout: fixed;">
+                                                       <thead>
+                                                           <tr>
+                                                               <th> Field Label </th>
+                                                               <th> Field Name </th>
+                                                               <th> Datatype </th>
+                                                               <th style="width: 5%;"><i class="glyphicon glyphicon-question-sign" title="Shows if the field is available in the other org or not"></i></th>
+                                                           </tr>
+                                                       </thead>
+                                                       <tbody>
+                                                           <tr ng-repeat="item in destinationCSMetaFields[key]">
+                                                                <td> {{item.label}} </td>   
+                                                                <td> {{item.name}} </td>   
+                                                                <td> {{item.type}} </td>   
+                                                                <td>
+                                                                    <i ng-show="isCSAvailable('dest',key,item.name)" class="glyphicon glyphicon-ok-sign" style="color: #4CAF50;font-size: 15px;"></i>
+                                                                    <i ng-show="!isCSAvailable('dest',key,item.name)" class="glyphicon glyphicon-remove-sign" style="color: #f44336;font-size: 15px;"></i>
+                                                                </td>   
+                                                                                                
+                                                           </tr>
+                                                       </tbody>
+                                                   </table>    
+                                              </div> 
+                                              </div>
+                                        </div>
+                                    </div>
+                                    
                                     </div>
                                   </div>
                                 </div>
                          </div>
                          
                     </div>
-                    
+                    </div>
+                    </div>
                     
                 </md-content>
             </md-tab>
@@ -198,6 +324,70 @@
                                 </div>    
                             </div>
                         </div>
+                        <!-- SIDEBAR STARTS -->
+                        <md-sidenav class="md-sidenav-left" md-component-id="left" md-disable-backdrop md-whiteframe="6">
+
+                          <md-toolbar class="md-theme-indigo">
+                            <h1 class="md-toolbar-tools">{{currentPS.label}}</h1>
+                          </md-toolbar>
+
+                          <md-content layout-margin>
+
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                         <div  class="table-responsive">
+                                            <table class="table table-bordered table-hover">
+                                            <thead>
+                                                <tr style="background-color: rgb(130,177,255)">
+                                                    <th>
+                                                       <h4>{{orgDetail['sourceorg'].uname}}</h4>
+                                                    </th>    
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="user in currentSourceUPA">
+                                                        <td>
+                                                            <span>{{user.assignee.Name}}</span>    
+                                                        </td>
+                                                         
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>   
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div  class="table-responsive">
+                                            <table class="tablew table-bordered table-hover">
+                                            <thead>
+                                                <tr style="background-color: rgb(130,177,255)">
+                                                    <th>
+                                                       <h4>{{orgDetail['destorg'].uname}}</h4>
+                                                    </th>    
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="user in currentDestUPA">
+                                                        <td>
+                                                             <span>{{user.assignee.Name}}</span> 
+                                                        </td>
+                                                        
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div> 
+                                    </div>
+                                </div>
+                            </div>
+                           
+                                
+                                
+                            <md-button ng-click="closeLeft()" class="md-accent">
+                              Close this Sidenav
+                            </md-button>
+                          </md-content>
+
+                        </md-sidenav>
                     </div>
                     <div flex="80" ng-if="sourcePermissionset && destinationPermissionset">
                     <div ng-cloak layout-gt-sm="row" layout="column">
@@ -210,19 +400,38 @@
                              <md-content>
                                 <md-list  class="md-dense" flex>
                                     <md-subheader class="md-no-sticky">Total {{sourcePermissionset.length}} items</md-subheader>
-                                   <!--  <md-list-item class="md-1-line" ng-repeat="(key,value) in sourcePermissionsetMapSorted" ng-class="{'not-available':value==null,'available':value!=null}">
-                                      <div class="md-list-item-text" layout="column" >
-                                        <h2 ng-show="value!=null">{{value.name}}</h2>
-                                      </div>
-                                      
-                                    </md-list-item> -->
+                                  
                                     <div layout="row" ng-repeat="(key,value) in sourcePermissionsetMapSorted" ng-class="{'not-available':value==null,'available':value!=null}">
+                                         <div style="float: left;width: 100%;">
                                          <div ng-show="value!=null">
-                                            <h4 ng-show="value!=null">{{value.name}}</h4>   
+                                            <div style="float: left;"><h4 ng-show="value!=null">{{value.name}}</h4> </div>
+                                            
                                         </div>
                                          <div ng-show="value==null">
                                             <h4>N/A</h4>
                                          </div>
+                                         </div>
+                                         <div style="float: right;">
+                                         <md-menu ng-show="value!=null">
+                                              <md-button aria-label="menu" class="" ng-click="$mdOpenMenu($event)">
+                                              <ng-md-icon style="fill: white" icon="more_vert" size="24"></ng-md-icon>
+                                              </md-button> 
+                                               <md-menu-content width="4">
+                                                    <md-menu-item>
+                                                      <md-button ng-click="getUPA(value,'source')">
+                                                       <ng-md-icon icon="person_outline" size="24"></ng-md-icon>
+                                                       View Assigned User
+                                                      </md-button>
+                                                    </md-menu-item>
+                                                    <md-menu-item>
+                                                      <md-button ng-click="">
+                                                      <ng-md-icon icon="insert_comment" size="24"></ng-md-icon>
+                                                      View Object Permissions
+                                                      </md-button>
+                                                    </md-menu-item>
+                                                </md-menu-content>
+                                              </md-menu> 
+                                          </div>
                                     </div>
                                 </md-list>
                             </md-content>    
@@ -236,20 +445,37 @@
                              <md-content>
                                 <md-list  class="md-dense" flex>
                                     <md-subheader class="md-no-sticky">Total {{destinationPermissionset.length}} items</md-subheader>
-                                    <!-- <md-list-item class="md-1-line" ng-repeat="(key,value) in destinationPermissionsetMapSorted" ng-class="{'not-available':value==null,'available':value!=null}">
-                                      <div class="md-list-item-text" layout="column" >
-                                        <h2 ng-show="value!=null">{{value.name}}</h2>
-                                      </div>
-                                      
-                                    </md-list-item> -->
+                                    
                                      <div layout="row" ng-repeat="(key,value) in destinationPermissionsetMapSorted" ng-class="{'not-available':value==null,'available':value!=null}">
+                                       <div style="float: left;width: 100%;">
                                         <div ng-show="value!=null">
                                             <h4 ng-show="value!=null">{{value.name}}</h4>   
                                         </div>
                                            <div ng-show="value==null">
                                             <h4>N/A</h4>
                                          </div>
-
+                                         </div>
+                                          <div style="float: right;">
+                                             <md-menu ng-show="value!=null">
+                                                  <md-button aria-label="menu" class="" ng-click="$mdOpenMenu($event)">
+                                                  <ng-md-icon style="fill: white" icon="more_vert" size="24"></ng-md-icon>
+                                                  </md-button> 
+                                                   <md-menu-content width="4">
+                                                        <md-menu-item>
+                                                          <md-button ng-click="getUPA(value,'dest')">
+                                                          <ng-md-icon icon="person_outline" size="24"></ng-md-icon>
+                                                          View Assigned User
+                                                          </md-button>
+                                                        </md-menu-item>
+                                                        <md-menu-item>
+                                                          <md-button ng-click="">
+                                                          <ng-md-icon icon="insert_comment" size="24"></ng-md-icon>
+                                                          View Object Permissions
+                                                          </md-button>
+                                                        </md-menu-item>
+                                                    </md-menu-content>
+                                                  </md-menu> 
+                                              </div>
                                     </div>
                                 </md-list>
                             </md-content>    
